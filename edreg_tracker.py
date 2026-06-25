@@ -104,7 +104,7 @@ def scrape_with_playwright(headless: bool = True) -> pd.DataFrame:
         browser = p.chromium.launch(headless=headless)
         page = browser.new_page(locale="zh-TW")
         page.goto(URL, wait_until="domcontentloaded", timeout=180_000)
-page.wait_for_timeout(5000)
+        page.wait_for_timeout(5000)
 
         # 有些 React 表格會慢少少；等到關鍵字出現。
         try:
