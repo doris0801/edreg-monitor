@@ -1,1 +1,38 @@
+name: E-dReg Daily Tracker
 
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "10 1 * * *"   # 台灣時間每天 09:10
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          playwright install chromium
+
+      - name: Run E-dReg tracker
+        run: python edreg_tracker.py
+
+      - name: Commit updated data
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add data/
+          git commit -m "Update E-dReg data" || echo "No changes"
+          git push
